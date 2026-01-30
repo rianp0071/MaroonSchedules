@@ -9,8 +9,8 @@ npx expo start<br>
 
 **Languages/Frameworks:**
 
-**Frontend:** 
+**Frontend:** React Native, Typescript, HTML, CSS
 
 **Backend:** Python, FastApi
 
-**Database:** 
+**Database:** SQL
