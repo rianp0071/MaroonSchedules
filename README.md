@@ -1,7 +1,6 @@
 # MaroonSchedules
 
-***Quick Start***:<br>
-Run the following:<br>
+***Quick Start (run the following)***:<br>
 git clone https://github.com/rianp0071/MaroonSchedules<br>
 cd MaroonSchedules<br>
 npm install expo<br>
