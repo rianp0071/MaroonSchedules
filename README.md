@@ -1,6 +1,6 @@
 # MaroonSchedules
 
-**Quick Start**:
+**Quick Start**:<br>
 Run the following:<br>
 git clone https://github.com/rianp0071/MaroonSchedules<br>
 cd MaroonSchedules<br>
