@@ -38,9 +38,12 @@ export function Dashboard() {
                         <Text style={styles.greeting}>Howdy</Text>
                         <Text style={styles.name}>Ritej</Text>
                     </View>
-                    <View style={styles.avatar}>
+                    <Pressable
+                        style={styles.avatar}
+                        onPress={() => navigation.navigate('Profile')}
+                    >
                         <Text style={styles.avatarText}>R</Text>
-                    </View>
+                    </Pressable>
                 </View>
 
                 {/* Current Term Card */}

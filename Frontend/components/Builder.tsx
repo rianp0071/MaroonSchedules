@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, ScrollView, Pressable, Dimensions } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, Pressable, useWindowDimensions } from 'react-native';
 import { AlertTriangle, X } from 'lucide-react-native';
 import { Card } from './Card';
 import { useCourseStore } from '../store/courseStore';
@@ -26,12 +26,6 @@ const COLORS = {
     border: '#E0E0E0',
     danger: '#DC2626',
 };
-
-// Calculate Dimensions for the Grid
-const { width } = Dimensions.get('window');
-const TIME_COL_WIDTH = 50;
-const GRID_WIDTH = Math.max(width - 32, 600); // Allow horizontal scroll if needed, but min screen width minus padding
-const DAY_COL_WIDTH = (GRID_WIDTH - TIME_COL_WIDTH) / 5;
 
 export function Builder() {
     const { courses, removeCourse } = useCourseStore();
@@ -106,97 +100,103 @@ function WeekView({
     onSelectCourse,
     onRemoveCourse,
 }: any) {
+    const { width } = useWindowDimensions();
+    const TIME_COL_WIDTH = 50;
+    // Fit precisely on screen with small padding (16px total horizontal padding)
+    // If width is very small, we might want a minimum, but request was to "fit on screen"
+    const GRID_WIDTH = width - 32;
+    const DAY_COL_WIDTH = (GRID_WIDTH - TIME_COL_WIDTH) / 5;
+
     return (
-        <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-            <ScrollView contentContainerStyle={{ paddingBottom: 24 }}>
-                <View style={{ width: GRID_WIDTH, paddingHorizontal: 0 }}>
-                    {/* Day Headers */}
-                    <View style={styles.gridHeader}>
-                        <View style={{ width: TIME_COL_WIDTH }} />
-                        {days.map((day) => (
-                            <View key={day} style={{ width: DAY_COL_WIDTH, alignItems: 'center' }}>
-                                <Text style={styles.dayHeaderText}>{day}</Text>
-                            </View>
-                        ))}
-                    </View>
-
-                    {/* Grid */}
-                    <View style={styles.gridBody}>
-                        {hours.map((hour) => (
-                            <View key={hour} style={styles.gridRow}>
-                                <View style={[styles.timeSlot, { width: TIME_COL_WIDTH }]}>
-                                    <Text style={styles.timeText}>
-                                        {hour > 12 ? hour - 12 : hour}
-                                        {hour >= 12 ? 'pm' : 'am'}
-                                    </Text>
-                                </View>
-                                {days.map((day) => (
-                                    <View
-                                        key={day}
-                                        style={[styles.gridCell, { width: DAY_COL_WIDTH }]}
-                                    />
-                                ))}
-                            </View>
-                        ))}
-
-                        {/* Course Blocks */}
-                        {courses.map((course: any) =>
-                            course.days.map((day: string) => {
-                                const dayIndex = days.indexOf(dayMap[day]);
-                                if (dayIndex === -1) return null;
-
-                                const topOffset = ((course.startTime - 480) / 60) * 64; // 64 is approximate height of row (adjust based on styling)
-                                const height = ((course.endTime - course.startTime) / 60) * 64;
-                                const hasConflict = conflicts.some((c: string) => c.includes(course.code));
-
-                                return (
-                                    <Pressable
-                                        key={`${course.id}-${day}`}
-                                        onPress={() => onSelectCourse(course.id)}
-                                        style={[
-                                            styles.courseBlock,
-                                            {
-                                                left: TIME_COL_WIDTH + dayIndex * DAY_COL_WIDTH + 2,
-                                                top: topOffset, // Adjust topOffset based on row height constant
-                                                width: DAY_COL_WIDTH - 4,
-                                                height: height,
-                                                backgroundColor: course.color,
-                                                borderColor: hasConflict ? COLORS.danger : 'transparent',
-                                                borderWidth: hasConflict ? 2 : 0,
-                                            },
-                                        ]}
-                                    >
-                                        <Text style={styles.blockCode} numberOfLines={1}>{course.code}</Text>
-                                        <Text style={styles.blockText} numberOfLines={1}>{course.location}</Text>
-                                        <Text style={styles.blockText} numberOfLines={1}>{course.time}</Text>
-
-                                        {hasConflict && (
-                                            <AlertTriangle size={12} color="white" style={styles.blockConflictIcon} />
-                                        )}
-
-                                        {selectedCourse === course.id && (
-                                            <Pressable
-                                                onPress={(e) => {
-                                                    e.stopPropagation();
-                                                    onRemoveCourse(course.id);
-                                                    onSelectCourse(null);
-                                                }}
-                                                style={styles.removeBlockButton}
-                                            >
-                                                <X size={12} color="white" />
-                                            </Pressable>
-                                        )}
-                                    </Pressable>
-                                );
-                            })
-                        )}
-                    </View>
+        <ScrollView contentContainerStyle={{ paddingBottom: 24, paddingHorizontal: 16 }}>
+            <View style={{ width: GRID_WIDTH }}>
+                {/* Day Headers */}
+                <View style={styles.gridHeader}>
+                    <View style={{ width: TIME_COL_WIDTH }} />
+                    {days.map((day) => (
+                        <View key={day} style={{ width: DAY_COL_WIDTH, alignItems: 'center' }}>
+                            <Text style={styles.dayHeaderText}>{day}</Text>
+                        </View>
+                    ))}
                 </View>
-            </ScrollView>
+
+                {/* Grid */}
+                <View style={styles.gridBody}>
+                    {hours.map((hour) => (
+                        <View key={hour} style={styles.gridRow}>
+                            <View style={[styles.timeSlot, { width: TIME_COL_WIDTH }]}>
+                                <Text style={styles.timeText}>
+                                    {hour > 12 ? hour - 12 : hour}
+                                    {hour >= 12 ? 'pm' : 'am'}
+                                </Text>
+                            </View>
+                            {days.map((day) => (
+                                <View
+                                    key={day}
+                                    style={[styles.gridCell, { width: DAY_COL_WIDTH }]}
+                                />
+                            ))}
+                        </View>
+                    ))}
+
+                    {/* Course Blocks */}
+                    {courses.map((course: any) =>
+                        course.days.map((day: string) => {
+                            const dayIndex = days.indexOf(dayMap[day]);
+                            if (dayIndex === -1) return null;
+
+                            const topOffset = ((course.startTime - 480) / 60) * ROW_HEIGHT;
+                            const height = ((course.endTime - course.startTime) / 60) * ROW_HEIGHT;
+                            const hasConflict = conflicts.some((c: string) => c.includes(course.code));
+
+                            return (
+                                <Pressable
+                                    key={`${course.id}-${day}`}
+                                    onPress={() => onSelectCourse(course.id)}
+                                    style={[
+                                        styles.courseBlock,
+                                        {
+                                            left: TIME_COL_WIDTH + dayIndex * DAY_COL_WIDTH + 2,
+                                            top: topOffset, // Adjust topOffset based on row height constant
+                                            width: DAY_COL_WIDTH - 4,
+                                            height: height,
+                                            backgroundColor: course.color,
+                                            borderColor: hasConflict ? COLORS.danger : 'transparent',
+                                            borderWidth: hasConflict ? 2 : 0,
+                                        },
+                                    ]}
+                                >
+                                    <Text style={styles.blockCode} numberOfLines={1}>{course.code}</Text>
+                                    <Text style={styles.blockText} numberOfLines={1}>{course.location}</Text>
+                                    <Text style={styles.blockText} numberOfLines={1}>{course.time}</Text>
+
+                                    {hasConflict && (
+                                        <AlertTriangle size={12} color="white" style={styles.blockConflictIcon} />
+                                    )}
+
+                                    {selectedCourse === course.id && (
+                                        <Pressable
+                                            onPress={(e) => {
+                                                e.stopPropagation();
+                                                onRemoveCourse(course.id);
+                                                onSelectCourse(null);
+                                            }}
+                                            style={styles.removeBlockButton}
+                                        >
+                                            <X size={12} color="white" />
+                                        </Pressable>
+                                    )}
+                                </Pressable>
+                            );
+                        })
+                    )}
+                </View>
+            </View>
         </ScrollView>
     );
 }
 
+// ListView Function (unchanged start)
 function ListView({ courses, onRemoveCourse }: any) {
     return (
         <ScrollView contentContainerStyle={styles.listContent}>
