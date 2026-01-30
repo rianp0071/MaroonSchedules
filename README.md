@@ -1,5 +1,11 @@
 # MaroonSchedules
-New and improved schedule builder app
+
+**Quick Start**:
+Run the following:
+git clone https://github.com/rianp0071/MaroonSchedules
+cd MaroonSchedules
+npm install expo
+npx expo start
 
 **Languages/Frameworks:**
 
