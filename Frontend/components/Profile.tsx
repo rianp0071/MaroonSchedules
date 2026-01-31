@@ -13,11 +13,7 @@ const COLORS = {
     danger: '#DC2626',
 };
 
-const API_URL = Platform.select({
-    android: 'http://10.245.119.81:8000',
-    ios: 'http://10.245.119.81:8000',
-    default: 'http://localhost:8000',
-});
+import { API_URL } from '../config';
 
 export function Profile() {
     const navigation = useNavigation<any>();
