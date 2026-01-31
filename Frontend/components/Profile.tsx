@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { View, Text, StyleSheet, TextInput, Pressable, ScrollView, Switch } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, Text, StyleSheet, TextInput, Pressable, ScrollView, Switch, Platform } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { LogOut } from 'lucide-react-native';
 
@@ -13,6 +13,12 @@ const COLORS = {
     danger: '#DC2626',
 };
 
+const API_URL = Platform.select({
+    android: 'http://10.245.119.81:8000',
+    ios: 'http://10.245.119.81:8000',
+    default: 'http://localhost:8000',
+});
+
 export function Profile() {
     const navigation = useNavigation<any>();
     const [preferences, setPreferences] = useState({
@@ -23,6 +29,18 @@ export function Profile() {
         avoidFriday: false,
         showOnlineFirst: true,
     });
+    const [connectionStatus, setConnectionStatus] = useState<string>('Checking...');
+
+    useEffect(() => {
+        console.log(`Attempting to connect to: ${API_URL}`);
+        fetch(`${API_URL}/`)
+            .then(res => res.json())
+            .then(data => setConnectionStatus(`Backend Status: ${data.message}`))
+            .catch(err => {
+                console.error("Connection error:", err);
+                setConnectionStatus(`Error: ${err.message} \nURL: ${API_URL}`);
+            });
+    }, []);
 
     const handleLogout = () => {
         navigation.navigate('Onboarding'); // Or standard logout flow
@@ -31,6 +49,9 @@ export function Profile() {
     return (
         <ScrollView style={styles.container} contentContainerStyle={styles.contentContainer}>
             <Text style={styles.title}>Profile & Preferences</Text>
+            <Text style={{ textAlign: 'center', marginBottom: 20, color: COLORS.textSecondary }}>
+                {connectionStatus}
+            </Text>
 
             {/* Avatar Section */}
             <View style={styles.avatarSection}>
