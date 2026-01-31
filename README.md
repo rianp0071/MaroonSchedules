@@ -3,6 +3,9 @@
 ***Quick Start (run the following)***:<br>
 git clone https://github.com/rianp0071/MaroonSchedules<br>
 cd MaroonSchedules<br>
+cd Backend<br>
+pip install requirements.txt<br>
+cd ../<br>
 npm install expo<br>
 npx expo start<br>
 
