@@ -7,7 +7,7 @@ cd Backend<br>
 pip install requirements.txt<br>
 uvicorn main:app --reload<br>
 
-**Make new terminal**<br>
+***Make new terminal***<br>
 cd to MaroonSchedules if not already<br>
 npm install expo<br>
 npx expo start<br>
