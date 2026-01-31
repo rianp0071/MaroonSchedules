@@ -1,12 +1,14 @@
 # MaroonSchedules
 
-***Quick Start (run the following)***:<br>
+***Quick Start Demo (run the following)***:<br>
 git clone https://github.com/rianp0071/MaroonSchedules<br>
 cd MaroonSchedules<br>
 cd Backend<br>
 pip install requirements.txt<br>
 uvicorn main:app --reload<br>
-cd ../<br>
+
+**Make new terminal**
+cd to MaroonSchedules if not already
 npm install expo<br>
 npx expo start<br>
 
