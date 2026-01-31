@@ -5,6 +5,7 @@ git clone https://github.com/rianp0071/MaroonSchedules<br>
 cd MaroonSchedules<br>
 cd Backend<br>
 pip install -r requirements.txt<br>
+***Make .env file and paste EXPO_PUBLIC_API_URL=http://your-ipv4-address-here:8000***<br>
 uvicorn main:app --reload --host 0.0.0.0<br>
 
 ***Make new terminal***<br>
