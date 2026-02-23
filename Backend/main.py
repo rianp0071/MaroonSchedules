@@ -3,6 +3,7 @@ import requests
 from requests import RequestException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
+import test_func
 
 app = FastAPI()
 
