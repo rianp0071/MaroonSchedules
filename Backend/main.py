@@ -3,6 +3,7 @@ import requests
 from requests import RequestException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
+import test_func
 
 app = FastAPI()
 
@@ -18,5 +19,9 @@ app.add_middleware(
 @app.get("/")
 def read_root():
     return {"message": "hi"}
+
+@app.get("/test_func")
+def test():
+    return test_func()
 
 import time
