@@ -19,4 +19,8 @@ app.add_middleware(
 def read_root():
     return {"message": "hi"}
 
+@app.get("/test_func")
+def test():
+    return test_func()
+
 import time
